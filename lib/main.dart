@@ -4,6 +4,7 @@ void main() {
   runApp(const MeuApp());
 }
 
+
 class MeuApp extends StatelessWidget {
   const MeuApp({super.key});
 
@@ -17,7 +18,18 @@ class MeuApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
-      home: const AgendamentoEventoTela()
+      home: const AgendamentoEventoTela(),
     );
   }
+}
+
+class AgendamentoEventoTela extends StatefulWidget{
+  const AgendamentoEventoTela({super.key});
+
+  @override
+  State<AgendamentoEventoTela> createState() => _AgendamentoEventoTelaState();
+}
+class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela>{
+  static final DateTime _dataPadrao = DateTime.now();
+  static const TimeOfDay _horarioPadrao = TimeOfDay(hour: 19, minute: 0);
 }
