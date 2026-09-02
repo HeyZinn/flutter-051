@@ -31,6 +31,7 @@ class AgendamentoEventoTela extends StatefulWidget {
 enum Visibilidade { public, private, vip }
 
 class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
+  // --- 1. Valores Padrão (para reset) ---
   static final DateTime _dataPadrao = DateTime.now();
   static const TimeOfDay _horarioPadrao = TimeOfDay(hour: 19, minute: 0);
   static const String _tipoPadrao = 'Aniversário';
@@ -49,7 +50,9 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
     'Vegano',
   ];
   static const List<String> _tagsPadrao = [];
+  static const bool _lembretePadrao = true;
 
+  // --- 2. Variáveis de Estado ---
   late DateTime _dataSelecionada;
   late TimeOfDay _horarioSelecionado;
   late String _tipoEventoSelecionado;
@@ -57,6 +60,7 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
   late Visibilidade _visibilidadeSelecionada;
   late Map<String, bool> _servicosSelecionados;
   late List<String> _tagsSelecionadas;
+  late bool _notificacaoAtiva;
 
   @override
   void initState() {
@@ -73,6 +77,7 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
       _visibilidadeSelecionada = _visibilidadePadrao;
       _servicosSelecionados = Map<String, bool>.from(_servicosPadrao);
       _tagsSelecionadas = List<String>.from(_tagsPadrao);
+      _notificacaoAtiva = _lembretePadrao;
     });
     print('[DEBUG] Formulario resetado para os valores padrao.');
   }
@@ -90,6 +95,7 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
     print('Visibilidade: $_visibilidadeSelecionada');
     print('Serviços Adicionais: $_servicosSelecionados');
     print('Restrições Alimentares (Tags): $_tagsSelecionadas');
+    print('Lembrete Automático: $_notificacaoAtiva');
     print('=====================================');
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -144,6 +150,7 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // --- 1 e 2. DatePicker & TimePicker ---
               const Text(
                 'Data e Horário',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -170,8 +177,9 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
               const Divider(height: 32),
+
+              // --- 3. Menu Dropdown ---
               const Text(
                 'Tipo de Evento',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -206,6 +214,8 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
                 },
               ),
               const Divider(height: 32),
+
+              // --- 4. Slider ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -235,6 +245,8 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
                 },
               ),
               const Divider(height: 32),
+
+              // --- 5. Radio ---
               const Text(
                 'Visibilidade do Evento',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -277,6 +289,8 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
                 ],
               ),
               const Divider(height: 32),
+
+              // --- 6. Checkbox ---
               const Text(
                 'Serviços Adicionais',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -298,7 +312,7 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
                   );
                 }).toList(),
               ),
-              const Divider(height: 32),
+              const Divider(height: 32), // --- 7. Chip (FilterChip) ---
               const Text(
                 'Restrições Alimentares (Tags)',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -326,7 +340,49 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
                   );
                 }).toList(),
               ),
-              const Divider(height: 32),
+              const Divider(height: 32), // --- 8. Switch ---
+              SwitchListTile(
+                title: const Text('Enviar Lembrete Automático'),
+                subtitle: const Text(
+                  'Notificar convidados 24 horas antes do evento',
+                ),
+                value: _notificacaoAtiva,
+                onChanged: (bool ativo) {
+                  setState(() {
+                    _notificacaoAtiva = ativo;
+                  });
+                  print(
+                    '[DEBUG - Switch] Notificação automática alterada para: $ativo',
+                  );
+                },
+              ),
+              const SizedBox(height: 24), // --- Botões de Ação Final ---
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _resetarValores,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: const BorderSide(color: Colors.red),
+                      ),
+                      child: const Text('Cancelar'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _salvarFormulario,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Salvar'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
