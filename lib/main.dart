@@ -36,12 +36,19 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
   static const String _tipoPadrao = 'Aniversário';
   static const double _convidadosPadrao = 50.0;
   static const Visibilidade _visibilidadePadrao = Visibilidade.private;
+  static const Map<String, bool> _servicosPadrao = {
+    'Buffet': false,
+    'Fotógrafo': false,
+    'Decoração': false,
+    'DJ': false,
+  };
 
   late DateTime _dataSelecionada;
   late TimeOfDay _horarioSelecionado;
   late String _tipoEventoSelecionado;
   late double _quantidadeConvidados;
   late Visibilidade _visibilidadeSelecionada;
+  late Map<String, bool> _servicosSelecionados;
 
   @override
   void initState() {
@@ -56,6 +63,7 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
       _tipoEventoSelecionado = _tipoPadrao;
       _quantidadeConvidados = _convidadosPadrao;
       _visibilidadeSelecionada = _visibilidadePadrao;
+      _servicosSelecionados = Map<String, bool>.from(_servicosPadrao);
     });
     print('[DEBUG] Formulario resetado para os valores padrao.');
   }
@@ -64,11 +72,14 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
     print('=====================================');
     print('        RESUMO DO AGENDAMENTO        ');
     print('=====================================');
-    print('Data: ${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}');
+    print(
+      'Data: ${_dataSelecionada.day}/${_dataSelecionada.month}/${_dataSelecionada.year}',
+    );
     print('Horário: ${_horarioSelecionado.format(context)}');
     print('Tipo de Evento: $_tipoEventoSelecionado');
     print('Estimativa de Convidados: ${_quantidadeConvidados.round()}');
     print('Visibilidade: $_visibilidadeSelecionada');
+    print('Serviços Adicionais: $_servicosSelecionados');
     print('=====================================');
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -104,7 +115,9 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
       setState(() {
         _horarioSelecionado = horario;
       });
-      print('[DEBUG - TimePicker] Horário selecionado: ${horario.format(context)}');
+      print(
+        '[DEBUG - TimePicker] Horário selecionado: ${horario.format(context)}',
+      );
     }
   }
 
@@ -123,10 +136,7 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
             children: [
               const Text(
                 'Data e Horário',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Row(
@@ -154,30 +164,34 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
               const Divider(height: 32),
               const Text(
                 'Tipo de Evento',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 value: _tipoEventoSelecionado,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
                 items: ['Aniversário', 'Casamento', 'Corporativo', 'Outro']
-                    .map((tipo) => DropdownMenuItem<String>(
-                          value: tipo,
-                          child: Text(tipo),
-                        ))
+                    .map(
+                      (tipo) => DropdownMenuItem<String>(
+                        value: tipo,
+                        child: Text(tipo),
+                      ),
+                    )
                     .toList(),
                 onChanged: (novoValor) {
                   if (novoValor != null) {
                     setState(() {
                       _tipoEventoSelecionado = novoValor;
                     });
-                    print('[DEBUG - Menu] Tipo de evento selecionado: $novoValor');
+                    print(
+                      '[DEBUG - Menu] Tipo de evento selecionado: $novoValor',
+                    );
                   }
                 },
               ),
@@ -187,10 +201,7 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
                 children: [
                   const Text(
                     'Quantidade de Convidados',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     '${_quantidadeConvidados.round()} pessoas',
@@ -208,16 +219,15 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
                   setState(() {
                     _quantidadeConvidados = novoValor;
                   });
-                  print('[DEBUG - Slider] Quantidade de convidados: ${novoValor.round()}');
+                  print(
+                    '[DEBUG - Slider] Quantidade de convidados: ${novoValor.round()}',
+                  );
                 },
               ),
               const Divider(height: 32),
               const Text(
                 'Visibilidade do Evento',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Column(
                 children: [
@@ -255,6 +265,28 @@ class _AgendamentoEventoTelaState extends State<AgendamentoEventoTela> {
                     },
                   ),
                 ],
+              ),
+              const Divider(height: 32),
+              const Text(
+                'Serviços Adicionais',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Column(
+                children: _servicosSelecionados.keys.map((servico) {
+                  return CheckboxListTile(
+                    dense: true,
+                    title: Text(servico),
+                    value: _servicosSelecionados[servico],
+                    onChanged: (bool? marcado) {
+                      setState(() {
+                        _servicosSelecionados[servico] = marcado ?? false;
+                      });
+                      print(
+                        '[DEBUG - Checkbox] Servico "$servico" alterado para: $marcado',
+                      );
+                    },
+                  );
+                }).toList(),
               ),
               const Divider(height: 32),
             ],
