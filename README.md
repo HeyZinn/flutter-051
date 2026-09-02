@@ -2,7 +2,7 @@ App em Flutter feito para praticar os componentes de selecao do Material Design 
 
 ## Resumo do Desenvolvimento
 
-O app foi feito por etapas. Primeiro coloquei a data e hora puxando os calendarios nativos. Depois adicionei o dropdown pro tipo de evento e o slider pra controlar a quantidade de pessoas. Pra fechar, coloquei os botoes de radio pra visibilidade, os checkboxes pros servicos e os chips pra escolher as tags de comida, alem do switch pro lembrete.
+
 
 ### Respostas do Exercicio
 
